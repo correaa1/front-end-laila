@@ -1,10 +1,39 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { categoryService } from '../services/categoryService';
 import { useToast } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 
 export function useCategories() {
   const queryClient = useQueryClient();
   const toast = useToast();
+  const navigate = useNavigate();
+
+  const handleError = (error) => {
+    if (error.message === 'Sessão expirada. Por favor, faça login novamente.') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      navigate('/login');
+      
+      toast({
+        title: 'Sessão expirada',
+        description: 'Por favor, faça login novamente para continuar',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right',
+      });
+      return;
+    }
+    
+    toast({
+      title: 'Erro',
+      description: error.message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+      position: 'top-right',
+    });
+  };
 
   // Buscar todas as categorias
   const { 
@@ -17,6 +46,8 @@ export function useCategories() {
     queryKey: ['categories'],
     queryFn: () => categoryService.getAll(),
     staleTime: 10 * 60 * 1000, // 10 minutos - categorias mudam com menos frequência
+    retry: 1,
+    enabled: !!localStorage.getItem('accessToken'), // Só executar se houver token
   });
 
   // Adicionar uma nova categoria
@@ -33,16 +64,7 @@ export function useCategories() {
         position: 'top-right',
       });
     },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao adicionar',
-        description: error.response?.data?.message || 'Não foi possível adicionar a categoria',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
+    onError: handleError
   });
 
   // Atualizar uma categoria existente
@@ -61,16 +83,7 @@ export function useCategories() {
         position: 'top-right',
       });
     },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao atualizar',
-        description: error.response?.data?.message || 'Não foi possível atualizar a categoria',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
+    onError: handleError
   });
 
   // Excluir uma categoria
@@ -89,16 +102,7 @@ export function useCategories() {
         position: 'top-right',
       });
     },
-    onError: (error) => {
-      toast({
-        title: 'Erro ao excluir',
-        description: error.response?.data?.message || 'Não foi possível excluir a categoria',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
+    onError: handleError
   });
 
   return {

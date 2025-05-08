@@ -51,7 +51,7 @@ export default function TransactionForm({
   const transactionType = watch('type');
 
   const onFormSubmit = (data) => {
-    // Convert amount to number
+    // Convert amount to number and prepare data for the adapter
     const formattedData = {
       ...data,
       amount: parseFloat(data.amount),
@@ -160,13 +160,11 @@ export default function TransactionForm({
             })}
             placeholder="Selecione uma categoria"
           >
-            {categories
-              .filter(cat => !cat.type || cat.type === transactionType)
-              .map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </Select>
           {errors.categoryId && (
             <FormErrorMessage>{errors.categoryId.message}</FormErrorMessage>
