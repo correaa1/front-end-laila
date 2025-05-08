@@ -2,16 +2,16 @@ import { extendTheme } from '@chakra-ui/react';
 
 const colors = {
   brand: {
-    50: '#E6F5FF',
-    100: '#CCE8FF',
-    200: '#99D1FF',
-    300: '#66BAFF',
-    400: '#33A3FF',
-    500: '#008CFF', // cor principal
-    600: '#0070CC',
-    700: '#005499',
-    800: '#003866',
-    900: '#001C33',
+    50: '#E6FFFA',
+    100: '#B2F5EA',
+    200: '#81E6D9',
+    300: '#4FD1C5',
+    400: '#38B2AC',
+    500: '#319795', // cor principal (teal.500)
+    600: '#2C7A7B',
+    700: '#285E61',
+    800: '#234E52',
+    900: '#1D4044',
   },
   expense: {
     500: '#E53E3E', // vermelho para despesas
@@ -34,15 +34,15 @@ const components = {
     },
     variants: {
       solid: (props) => ({
-        bg: props.colorMode === 'dark' ? 'brand.500' : 'brand.500',
+        bg: props.colorMode === 'dark' ? 'teal.500' : 'teal.500',
         color: 'white',
         _hover: {
-          bg: props.colorMode === 'dark' ? 'brand.600' : 'brand.600',
+          bg: props.colorMode === 'dark' ? 'teal.600' : 'teal.600',
         },
       }),
       outline: (props) => ({
-        borderColor: props.colorMode === 'dark' ? 'brand.500' : 'brand.500',
-        color: props.colorMode === 'dark' ? 'brand.500' : 'brand.500',
+        borderColor: props.colorMode === 'dark' ? 'teal.500' : 'teal.500',
+        color: props.colorMode === 'dark' ? 'teal.500' : 'teal.500',
         _hover: {
           bg: props.colorMode === 'dark' ? 'whiteAlpha.100' : 'blackAlpha.50',
         },
