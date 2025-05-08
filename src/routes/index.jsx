@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStatus } from '../hooks/useAuthStatus';
 import LoadingScreen from '../components/UI/LoadingScreen';
 
 // Importação preguiçosa das páginas
@@ -12,7 +12,12 @@ const Transactions = lazy(() => import('../pages/Transactions'));
 const Categories = lazy(() => import('../pages/Categories'));
 
 export default function AppRoutes() {
-  const { user } = useAuth();
+  const { isLoggedIn, loading } = useAuthStatus();
+
+  // Se ainda estiver carregando o status de autenticação, mostra o loading
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <BrowserRouter>
@@ -20,11 +25,11 @@ export default function AppRoutes() {
         <Routes>
           <Route 
             path="/login" 
-            element={user ? <Navigate to="/dashboard" /> : <Login />} 
+            element={isLoggedIn ? <Navigate to="/dashboard" /> : <Login />} 
           />
           <Route 
             path="/register" 
-            element={user ? <Navigate to="/dashboard" /> : <Register />} 
+            element={isLoggedIn ? <Navigate to="/dashboard" /> : <Register />} 
           />
           
           <Route
@@ -54,7 +59,7 @@ export default function AppRoutes() {
             }
           />
           
-          <Route path="/" element={<Navigate to={user ? "/dashboard" : "/login"} />} />
+          <Route path="/" element={<Navigate to={isLoggedIn ? "/dashboard" : "/login"} />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Suspense>

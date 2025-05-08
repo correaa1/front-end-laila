@@ -11,17 +11,22 @@ import {
   InputRightElement,
   FormControl,
   FormErrorMessage,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { errorToast } from '../utils/toast';
 import { EmailIcon, LockIcon, ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import AuthLayout from '../components/Layout/AuthLayout';
 
+/**
+ * Página de login do usuário
+ */
 export default function Login() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [loginError, setLoginError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -31,24 +36,40 @@ export default function Login() {
     formState: { errors },
   } = useForm();
 
+  /**
+   * Submete o formulário de login
+   * @param {Object} data - Dados do formulário
+   */
   const onSubmit = async (data) => {
     setLoading(true);
+    setLoginError('');
+    
     try {
       const success = await login(data.email, data.password);
+      
       if (success) {
         navigate('/dashboard');
       } else {
-        errorToast(
-          'Erro de autenticação',
-          'Email ou senha incorretos. Por favor, tente novamente.'
-        );
+        setLoginError('Email ou senha incorretos. Por favor, tente novamente.');
       }
     } catch (error) {
-      errorToast(
-        'Erro no login',
-        'Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.'
-      );
-      console.error(error);
+      // Tratamento centralizado de erros de autenticação
+      if (error.response?.status === 401) {
+        setLoginError('Credenciais inválidas. Por favor, verifique seu email e senha.');
+      } else if (error.response?.status === 400) {
+        // Erros de validação
+        const errorData = error.response.data;
+        if (Array.isArray(errorData.message)) {
+          setLoginError(errorData.message.join(', '));
+        } else {
+          setLoginError(errorData.message || 'Dados inválidos. Verifique as informações fornecidas.');
+        }
+      } else if (error.request) {
+        // Erro de conexão (servidor indisponível)
+        setLoginError('Não foi possível conectar ao servidor. Verifique se o servidor está em execução.');
+      } else {
+        setLoginError('Ocorreu um erro ao tentar fazer login. Por favor, tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
@@ -56,6 +77,7 @@ export default function Login() {
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
 
+  // Estilos para os inputs
   const inputStyles = {
     bg: 'blue.50',
     borderColor: 'gray.300',
@@ -72,6 +94,13 @@ export default function Login() {
       title="Welcome" 
       subtitle=""
     >
+      {loginError && (
+        <Alert status="error" mb={4} borderRadius="md">
+          <AlertIcon />
+          {loginError}
+        </Alert>
+      )}
+      
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
         <VStack spacing={4} w="full">
           <FormControl isInvalid={!!errors.email}>
