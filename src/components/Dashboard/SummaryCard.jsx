@@ -17,19 +17,23 @@ export default function SummaryCard({
   };
 
   const color = colorMap[type];
-  const bg = useColorModeValue('white', 'gray.800');
+  const cardBg = useColorModeValue('white', 'gray.700');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   return (
     <Box
       p={5}
-      shadow="md"
+      shadow="sm"
       borderWidth="1px"
       borderRadius="lg"
-      bg={bg}
+      bg={cardBg}
       borderColor={borderColor}
       flex={1}
       minW="250px"
+      _hover={{ 
+        shadow: "md",
+        transition: "all 0.3s ease"
+      }}
     >
       <Flex justifyContent="space-between" alignItems="center" mb={2}>
         <Text fontSize="lg" fontWeight="medium">{title}</Text>

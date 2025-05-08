@@ -61,36 +61,34 @@ export default function Categories() {
 
   return (
     <MainLayout>
-      <Box>
-        <Flex justifyContent="space-between" alignItems="center" mb={6}>
-          <Heading size="lg">Categorias</Heading>
-          <Button leftIcon={<AddIcon />} colorScheme="teal" onClick={handleAddCategory}>
-            Nova Categoria
-          </Button>
-        </Flex>
+      <Flex justifyContent="space-between" alignItems="center" mb={6}>
+        <Heading size="lg">Categorias</Heading>
+        <Button leftIcon={<AddIcon />} colorScheme="teal" onClick={handleAddCategory}>
+          Nova Categoria
+        </Button>
+      </Flex>
 
-        <CategoryList 
-          categories={categories}
-          isLoading={isLoading}
-          onEdit={handleEditCategory}
-          onDelete={handleDeleteCategory}
-        />
+      <CategoryList 
+        categories={categories}
+        isLoading={isLoading}
+        onEdit={handleEditCategory}
+        onDelete={handleDeleteCategory}
+      />
 
-        <CategoryModal
-          isOpen={isOpen}
-          onClose={onClose}
-          onSave={handleSaveCategory}
-          category={currentCategory}
-        />
+      <CategoryModal
+        isOpen={isOpen}
+        onClose={onClose}
+        onSave={handleSaveCategory}
+        category={currentCategory}
+      />
 
-        <DeleteCategoryAlert
-          isOpen={isDeleteAlertOpen}
-          onClose={onDeleteAlertClose}
-          onConfirm={confirmDeleteCategory}
-          categoryName={categoryToDelete?.name}
-          isLoading={isDeleting}
-        />
-      </Box>
+      <DeleteCategoryAlert
+        isOpen={isDeleteAlertOpen}
+        onClose={onDeleteAlertClose}
+        onConfirm={confirmDeleteCategory}
+        categoryName={categoryToDelete?.name}
+        isLoading={isDeleting}
+      />
     </MainLayout>
   );
 } 

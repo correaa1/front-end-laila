@@ -1,4 +1,4 @@
-import { Box, useColorModeValue } from '@chakra-ui/react';
+import { Box, Flex, useColorModeValue } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { 
@@ -33,20 +33,27 @@ export default function MainLayout({ children }) {
   const bgColor = useColorModeValue('gray.50', 'gray.800');
 
   return (
-    <Box minH="100vh" bg={bgColor}>
-      <Sidebar
+    <Flex width="100vw" height="100vh" position="fixed" top="0" left="0">
+      {/* Sidebar fixa */}
+      <Box
+        width="240px"
+        height="100%"
         display={{ base: 'none', md: 'block' }}
-        links={links}
-      />
-      <Box 
-        ml={{ base: 0, md: 60 }}
+        flexShrink={0}
+      >
+        <Sidebar links={links} />
+      </Box>
+
+      {/* Área de conteúdo principal */}
+      <Box
+        flex="1"
+        bg={bgColor}
+        height="100%"
         p={6}
-        minH="100vh"
-        maxW={{ base: "100%", xl: "1200px" }}
-        mx="auto"
+        overflowY="auto"
       >
         {children}
       </Box>
-    </Box>
+    </Flex>
   );
 } 
