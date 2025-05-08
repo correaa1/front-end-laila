@@ -11,11 +11,13 @@ import {
   InputRightElement,
   FormControl,
   FormErrorMessage,
+  Alert,
+  AlertIcon,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { errorToast, successToast } from '../utils/toast';
+import { successToast } from '../utils/toast';
 import { EmailIcon, LockIcon, InfoIcon, ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import AuthLayout from '../components/Layout/AuthLayout';
 
@@ -23,6 +25,7 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registerError, setRegisterError] = useState('');
   const { register: registerUser } = useAuth();
   const navigate = useNavigate();
 
@@ -37,6 +40,8 @@ export default function Register() {
 
   const onSubmit = async (data) => {
     setLoading(true);
+    setRegisterError('');
+    
     try {
       const response = await registerUser(data.name, data.email, data.password);
       
@@ -47,17 +52,28 @@ export default function Register() {
         );
         navigate('/login');
       } else {
-        errorToast(
-          'Erro no cadastro',
-          response.error?.response?.data?.message || 'Não foi possível realizar o cadastro. Tente novamente.'
-        );
+        if (response.error?.response) {
+          const { status, data } = response.error.response;
+          
+          if (status === 400) {
+            // Erros de validação
+            if (Array.isArray(data.message)) {
+              setRegisterError(data.message.join(', '));
+            } else {
+              setRegisterError(data.message || 'Dados inválidos. Verifique as informações fornecidas.');
+            }
+          } else if (status === 409) {
+            setRegisterError('Este email já está em uso. Por favor, escolha outro.');
+          } else {
+            setRegisterError('Não foi possível realizar o cadastro. Tente novamente.');
+          }
+        } else {
+          setRegisterError('Não foi possível realizar o cadastro. Tente novamente.');
+        }
       }
     } catch (error) {
-      errorToast(
-        'Erro no cadastro',
-        'Ocorreu um erro ao tentar realizar o cadastro. Por favor, tente novamente.'
-      );
-      console.error(error);
+      console.error('Erro no cadastro:', error);
+      setRegisterError('Ocorreu um erro ao tentar realizar o cadastro. Por favor, tente novamente.');
     } finally {
       setLoading(false);
     }
@@ -82,6 +98,13 @@ export default function Register() {
       title="Cadastre-se" 
       subtitle="Crie sua conta para gerenciar suas finanças"
     >
+      {registerError && (
+        <Alert status="error" mb={4} borderRadius="md">
+          <AlertIcon />
+          {registerError}
+        </Alert>
+      )}
+      
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
         <VStack spacing={4} w="full">
           <FormControl isInvalid={!!errors.name}>

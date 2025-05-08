@@ -1,4 +1,4 @@
-import { Box, Flex, useDisclosure, IconButton, useColorModeValue } from '@chakra-ui/react';
+import { Box, useColorModeValue } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import { 
@@ -10,7 +10,6 @@ import {
 import { useAuth } from '../../context/AuthContext';
 
 export default function MainLayout({ children }) {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const { logout } = useAuth();
   const navigate = useNavigate();
 
@@ -31,14 +30,21 @@ export default function MainLayout({ children }) {
     },
   ];
 
+  const bgColor = useColorModeValue('gray.50', 'gray.800');
+
   return (
-    <Box minH="100vh" bg={useColorModeValue('gray.50', 'gray.900')}>
+    <Box minH="100vh" bg={bgColor}>
       <Sidebar
-        onClose={() => onClose}
         display={{ base: 'none', md: 'block' }}
         links={links}
       />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box 
+        ml={{ base: 0, md: 60 }}
+        p={6}
+        minH="100vh"
+        maxW={{ base: "100%", xl: "1200px" }}
+        mx="auto"
+      >
         {children}
       </Box>
     </Box>

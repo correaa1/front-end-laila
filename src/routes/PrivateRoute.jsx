@@ -1,15 +1,15 @@
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuthStatus } from '../hooks/useAuthStatus';
 import LoadingScreen from '../components/UI/LoadingScreen';
 
 export default function PrivateRoute({ children }) {
-  const { user, loading } = useAuth();
+  const { isLoggedIn, loading } = useAuthStatus();
 
   if (loading) {
     return <LoadingScreen message="Verificando autenticação..." />;
   }
 
-  if (!user) {
+  if (!isLoggedIn) {
     return <Navigate to="/login" />;
   }
 

@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+/**
+ * Cliente HTTP para comunicação com a API
+ * Configurado com interceptores para gerenciamento de autenticação e tratamento de erros
+ */
 const api = axios.create({
-  baseURL: 'http://localhost:3000', // URL do backend - ajuste conforme necessário
+  baseURL: 'http://localhost:3001',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -10,28 +14,25 @@ const api = axios.create({
 // Interceptor para adicionar o token JWT nas requisições
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('accessToken');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// Interceptor para tratar erros de resposta
+// Interceptor para tratamento unificado de erros
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Tratamento específico para erro de autenticação (401)
-    if (error.response && error.response.status === 401) {
-      // Redirecionar para login ou limpar dados de autenticação
-      localStorage.removeItem('token');
+    // Tratamento para erro de autenticação (401)
+    if (error.response?.status === 401) {
+      localStorage.removeItem('accessToken');
       localStorage.removeItem('user');
       
-      // Se não estiver na página de login, redireciona
+      // Redirecionamento apenas se não estiver já na página de login
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
