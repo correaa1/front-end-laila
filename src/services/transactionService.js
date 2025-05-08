@@ -97,7 +97,7 @@ export const transactionService = {
    */
   getMonthlySummary: async (year, month) => {
     try {
-      const response = await api.get(`/transactions/summary/${year}/${month}`);
+      const response = await api.get(`/summaries/monthly?year=${year}&month=${month}`);
       return response.data;
     } catch (error) {
       console.error(`Erro ao buscar resumo mensal ${month}/${year}:`, error);
