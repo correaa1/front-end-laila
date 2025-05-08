@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import PrivateRoute from './PrivateRoute';
 import { useAuth } from '../context/AuthContext';
+import LoadingScreen from '../components/UI/LoadingScreen';
 
 // Importação preguiçosa das páginas
 import { lazy, Suspense } from 'react';
@@ -15,7 +16,7 @@ export default function AppRoutes() {
 
   return (
     <BrowserRouter>
-      <Suspense fallback={<div>Carregando...</div>}>
+      <Suspense fallback={<LoadingScreen />}>
         <Routes>
           <Route 
             path="/login" 
