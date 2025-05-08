@@ -47,7 +47,7 @@ export function useTransactions(initialFilters = {}) {
     error,
     refetch
   } = useQuery({
-    queryKey: ['transactions', filters],
+    queryKey: ['transactions', filters, pagination.currentPage, pagination.pageSize],
     queryFn: async () => {
       // Verificar autenticação antes de fazer a requisição
       const token = localStorage.getItem('accessToken');
@@ -55,45 +55,28 @@ export function useTransactions(initialFilters = {}) {
         throw new Error('Não autenticado');
       }
       
-      try {
-        // Incluir paginação nos filtros
-        const paginatedFilters = {
-          ...filters,
-          page: pagination.currentPage,
-          pageSize: pagination.pageSize
-        };
+      // Incluir paginação nos filtros
+      const paginatedFilters = {
+        ...filters,
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize
+      };
+      
+      const response = await transactionService.getAll(paginatedFilters);
+      
+      // Atualizar informações de paginação com base na resposta da API
+      if (response.pagination) {
+        setPagination({
+          currentPage: response.pagination.currentPage,
+          pageSize: response.pagination.pageSize,
+          totalPages: response.pagination.totalPages,
+          totalItems: response.pagination.totalItems
+        });
         
-        const response = await transactionService.getAll(paginatedFilters);
-        
-        // Atualizar informações de paginação com base na resposta da API
-        if (response.pagination) {
-          setPagination({
-            currentPage: response.pagination.currentPage,
-            pageSize: response.pagination.pageSize,
-            totalPages: response.pagination.totalPages,
-            totalItems: response.pagination.totalItems
-          });
-        }
-        
-        return response.data || response;
-      } catch (error) {
-        // Tratamento específico para erro de autenticação
-        if (error.response?.status === 401) {
-          // Limpar dados de autenticação e redirecionar para login
-          localStorage.removeItem('accessToken');
-          localStorage.removeItem('user');
-          navigate('/login');
-          
-          toast({
-            title: 'Sessão expirada',
-            description: 'Por favor, faça login novamente para continuar',
-            status: 'warning',
-            duration: 3000,
-            isClosable: true,
-          });
-        }
-        throw error;
+        return response.data;
       }
+      
+      return response;
     },
     staleTime: 5 * 60 * 1000, // 5 minutos
     retry: 1, // Limitar retry para evitar loop infinito 
@@ -105,7 +88,6 @@ export function useTransactions(initialFilters = {}) {
       ...prev,
       currentPage: newPage
     }));
-    
   };
 
   // Função para mudar o tamanho da página
@@ -125,6 +107,34 @@ export function useTransactions(initialFilters = {}) {
     }));
   };
 
+  const handleError = (error) => {
+    if (error.message === 'Sessão expirada. Por favor, faça login novamente.') {
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('user');
+      navigate('/login');
+      
+      toast({
+        title: 'Sessão expirada',
+        description: 'Por favor, faça login novamente para continuar',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+        position: 'top-right',
+      });
+      return;
+    }
+    
+    // Para outros tipos de erro
+    toast({
+      title: 'Erro',
+      description: error.message,
+      status: 'error',
+      duration: 3000,
+      isClosable: true,
+      position: 'top-right',
+    });
+  };
+
   // Adicionar uma nova transação
   const createMutation = useMutation({
     mutationFn: (transaction) => transactionService.create(transaction),
@@ -139,29 +149,7 @@ export function useTransactions(initialFilters = {}) {
         position: 'top-right',
       });
     },
-    onError: (error) => {
-      // Tratamento específico para erro de autenticação
-      if (error.response?.status === 401) {
-        navigate('/login');
-        toast({
-          title: 'Sessão expirada',
-          description: 'Por favor, faça login novamente para continuar',
-          status: 'warning',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-      
-      toast({
-        title: 'Erro ao adicionar',
-        description: error.response?.data?.message || 'Não foi possível adicionar a transação',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
+    onError: handleError
   });
 
   // Atualizar uma transação existente
@@ -178,29 +166,7 @@ export function useTransactions(initialFilters = {}) {
         position: 'top-right',
       });
     },
-    onError: (error) => {
-      // Tratamento específico para erro de autenticação
-      if (error.response?.status === 401) {
-        navigate('/login');
-        toast({
-          title: 'Sessão expirada',
-          description: 'Por favor, faça login novamente para continuar',
-          status: 'warning',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-      
-      toast({
-        title: 'Erro ao atualizar',
-        description: error.response?.data?.message || 'Não foi possível atualizar a transação',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
+    onError: handleError
   });
 
   // Excluir uma transação
@@ -217,29 +183,7 @@ export function useTransactions(initialFilters = {}) {
         position: 'top-right',
       });
     },
-    onError: (error) => {
-      // Tratamento específico para erro de autenticação
-      if (error.response?.status === 401) {
-        navigate('/login');
-        toast({
-          title: 'Sessão expirada',
-          description: 'Por favor, faça login novamente para continuar',
-          status: 'warning',
-          duration: 3000,
-          isClosable: true,
-        });
-        return;
-      }
-      
-      toast({
-        title: 'Erro ao excluir',
-        description: error.response?.data?.message || 'Não foi possível excluir a transação',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-        position: 'top-right',
-      });
-    }
+    onError: handleError
   });
 
   return {

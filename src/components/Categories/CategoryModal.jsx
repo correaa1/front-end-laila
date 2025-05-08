@@ -10,10 +10,10 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Select,
   FormErrorMessage,
   Textarea,
   VStack,
+  useToast,
 } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
@@ -30,10 +30,11 @@ export default function CategoryModal({
     reset,
     formState: { errors, isSubmitting },
   } = useForm();
+  const toast = useToast();
 
   useEffect(() => {
     if (isOpen) {
-      reset(category || { name: '', description: '', type: 'expense' });
+      reset(category || { name: '', description: '' });
     }
   }, [isOpen, category, reset]);
 
@@ -74,23 +75,6 @@ export default function CategoryModal({
                   placeholder="Descrição da categoria"
                   {...register('description')}
                 />
-              </FormControl>
-
-              <FormControl isInvalid={errors.type}>
-                <FormLabel>Tipo</FormLabel>
-                <Select
-                  id="type"
-                  placeholder="Selecione o tipo"
-                  {...register('type', {
-                    required: 'Tipo é obrigatório',
-                  })}
-                >
-                  <option value="expense">Despesa</option>
-                  <option value="income">Receita</option>
-                </Select>
-                <FormErrorMessage>
-                  {errors.type && errors.type.message}
-                </FormErrorMessage>
               </FormControl>
             </VStack>
           </ModalBody>

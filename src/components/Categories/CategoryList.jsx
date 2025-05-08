@@ -1,139 +1,98 @@
 import {
+  Box,
+  Button,
+  Heading,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
   Td,
+  Icon,
   IconButton,
-  Box,
-  Text,
-  HStack,
   Skeleton,
+  Stack,
+  Text,
   useColorModeValue,
-  TableContainer,
-  Badge,
+  Flex,
 } from '@chakra-ui/react';
-import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
+import { MdEdit, MdDelete } from 'react-icons/md';
 
 export default function CategoryList({
   categories = [],
-  isLoading = false,
   onEdit,
   onDelete,
+  isLoading,
 }) {
-  const evenRowBg = useColorModeValue('gray.50', 'gray.700');
-  const tableBg = useColorModeValue('white', 'gray.800');
-  const headerBg = useColorModeValue('gray.50', 'gray.700');
-
   if (isLoading) {
     return (
-      <Box borderWidth="1px" borderRadius="lg" overflow="hidden" bg={tableBg}>
-        <TableContainer>
-          <Table variant="simple" size="md">
-            <Thead bg={headerBg}>
-              <Tr>
-                <Th>NOME</Th>
-                <Th>DESCRIÇÃO</Th>
-                <Th>TIPO</Th>
-                <Th>AÇÕES</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {Array(5)
-                .fill('')
-                .map((_, i) => (
-                  <Tr key={i}>
-                    <Td><Skeleton height="20px" width="120px" /></Td>
-                    <Td><Skeleton height="20px" width="180px" /></Td>
-                    <Td><Skeleton height="20px" width="80px" /></Td>
-                    <Td><Skeleton height="20px" width="80px" /></Td>
-                  </Tr>
-                ))}
-            </Tbody>
-          </Table>
-        </TableContainer>
-      </Box>
+      <Stack spacing={4}>
+        {[...Array(5)].map((_, i) => (
+          <Box
+            key={i}
+            p={4}
+            shadow="md"
+            borderWidth="1px"
+            borderRadius="md"
+          >
+            <Skeleton height="20px" width="40%" mb={2} />
+            <Skeleton height="16px" width="60%" />
+          </Box>
+        ))}
+      </Stack>
     );
   }
 
-  if (categories.length === 0) {
+  if (!categories.length) {
     return (
-      <Box
-        p={8}
-        borderWidth="1px"
-        borderRadius="lg"
-        textAlign="center"
-        bg={tableBg}
-      >
-        <Text fontSize="lg" color="gray.500">
-          Nenhuma categoria encontrada
-        </Text>
-        <Text fontSize="sm" color="gray.400" mt={2}>
-          Adicione uma nova categoria para organizar suas transações
+      <Box textAlign="center" py={10} px={6}>
+        <Text fontSize="lg" mt={3} mb={6}>
+          Nenhuma categoria encontrada. Adicione sua primeira categoria!
         </Text>
       </Box>
     );
   }
 
   return (
-    <Box borderWidth="1px" borderRadius="lg" overflow="hidden" bg={tableBg}>
-      <TableContainer>
-        <Table variant="simple" size="md">
-          <Thead bg={headerBg}>
-            <Tr>
-              <Th>NOME</Th>
-              <Th>DESCRIÇÃO</Th>
-              <Th>TIPO</Th>
-              <Th>AÇÕES</Th>
+    <Box overflowX="auto">
+      <Table variant="simple">
+        <Thead>
+          <Tr>
+            <Th>NOME</Th>
+            <Th>DESCRIÇÃO</Th>
+            <Th width="120px">AÇÕES</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {categories.map((category) => (
+            <Tr key={category.id}>
+              <Td fontWeight="medium">{category.name}</Td>
+              <Td>
+                {/* Usamos um valor padrão vazio se description for undefined */}
+                {category.description || ''}
+              </Td>
+              <Td>
+                <Flex gap={2}>
+                  <IconButton
+                    icon={<Icon as={MdEdit} />}
+                    size="sm"
+                    colorScheme="blue"
+                    aria-label="Editar categoria"
+                    onClick={() => onEdit(category)}
+                  />
+                  <IconButton
+                    icon={<Icon as={MdDelete} />}
+                    size="sm"
+                    colorScheme="red"
+                    aria-label="Excluir categoria"
+                    onClick={() => onDelete(category.id)}
+                  />
+                </Flex>
+              </Td>
             </Tr>
-          </Thead>
-          <Tbody>
-            {categories.map((category, index) => (
-              <Tr 
-                key={category.id} 
-                bg={index % 2 === 1 ? evenRowBg : 'transparent'}
-              >
-                <Td>
-                  <Text fontWeight="medium">{category.name}</Text>
-                </Td>
-                <Td>{category.description || '-'}</Td>
-                <Td>
-                  <Badge
-                    colorScheme={category.type === 'expense' ? 'red' : 'green'}
-                    variant="solid"
-                    px={2}
-                    py={1}
-                    borderRadius="full"
-                  >
-                    {category.type === 'expense' ? 'Despesa' : 'Receita'}
-                  </Badge>
-                </Td>
-                <Td>
-                  <HStack spacing={2}>
-                    <IconButton
-                      aria-label="Editar categoria"
-                      icon={<EditIcon />}
-                      size="sm"
-                      colorScheme="blue"
-                      variant="ghost"
-                      onClick={() => onEdit(category)}
-                    />
-                    <IconButton
-                      aria-label="Excluir categoria"
-                      icon={<DeleteIcon />}
-                      size="sm"
-                      colorScheme="red"
-                      variant="ghost"
-                      onClick={() => onDelete(category.id)}
-                    />
-                  </HStack>
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+          ))}
+        </Tbody>
+      </Table>
     </Box>
   );
 } 

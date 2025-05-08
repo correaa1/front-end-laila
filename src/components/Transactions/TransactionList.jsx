@@ -132,7 +132,7 @@ export default function TransactionList({
                   </Td>
                   <Td>
                     <Badge px={2} py={1} borderRadius="full">
-                      {transaction.category.name}
+                      {transaction.category?.name || 'Sem categoria'}
                     </Badge>
                   </Td>
                   <Td isNumeric fontWeight="bold" color={transaction.type === 'expense' ? 'expense.500' : 'income.500'}>
