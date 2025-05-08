@@ -1,12 +1,49 @@
-# React + Vite
+# Gerenciador de Finanças Pessoais
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Sistema de controle financeiro pessoal desenvolvido como teste técnico, utilizando React, Chakra UI, React Query e consumindo uma API REST com Node.js.
 
-Currently, two official plugins are available:
+## Tecnologias Utilizadas
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Frontend**:
+  - React 19
+  - Chakra UI para interface
+  - React Router para navegação
+  - React Query para gerenciamento de estado e chamadas à API
+  - React Hook Form para formulários
+  - Axios para requisições HTTP
+  - Recharts para gráficos
 
-## Expanding the ESLint configuration
+## Estrutura do Projeto
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+O projeto segue uma estrutura organizada por responsabilidades:
+
+- `/src/components`: Componentes reutilizáveis
+- `/src/context`: Contextos React (ex: autenticação)
+- `/src/hooks`: Custom hooks
+- `/src/pages`: Páginas da aplicação
+- `/src/routes`: Configuração de rotas
+- `/src/services`: Serviços para comunicação com a API
+- `/src/theme`: Configuração do tema Chakra UI
+- `/src/utils`: Funções utilitárias
+
+## Funcionalidades
+
+- ✅ Autenticação de usuários (login/registro)
+- ✅ Gerenciamento de categorias financeiras
+- ✅ Controle de lançamentos (receitas e despesas)
+- ✅ Dashboard com resumos e gráficos financeiros
+
+## Etapas Concluídas
+
+- [x] **Etapa 1**: Inicialização do projeto
+- [x] **Etapa 2**: Estruturação do projeto (configuração de rotas, temas, serviços)
+
+## Como Executar
+
+```bash
+# Instalar dependências
+npm install
+
+# Executar em desenvolvimento
+npm run dev
+```
