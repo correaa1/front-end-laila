@@ -9,7 +9,7 @@ import {
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
-const NavItem = ({ icon, children, to, ...rest }) => {
+const NavItem = ({ icon, children, to, onClick, ...rest }) => {
   const activeStyle = {
     bg: useColorModeValue('brand.50', 'rgba(255, 255, 255, 0.16)'),
     color: 'brand.500',
@@ -19,7 +19,8 @@ const NavItem = ({ icon, children, to, ...rest }) => {
   return (
     <NavLink
       to={to}
-      style={({ isActive }) => (isActive ? activeStyle : {})}
+      onClick={onClick}
+      style={({ isActive }) => (isActive && to !== '#' ? activeStyle : {})}
       end
     >
       {({ isActive }) => (
@@ -33,8 +34,8 @@ const NavItem = ({ icon, children, to, ...rest }) => {
             bg: useColorModeValue('brand.50', 'rgba(255, 255, 255, 0.16)'),
             color: 'brand.500',
           }}
-          fontWeight={isActive ? 'bold' : 'normal'}
-          color={isActive ? 'brand.500' : useColorModeValue('gray.600', 'gray.300')}
+          fontWeight={isActive && to !== '#' ? 'bold' : 'normal'}
+          color={isActive && to !== '#' ? 'brand.500' : useColorModeValue('gray.600', 'gray.300')}
           {...rest}
         >
           {icon && (
@@ -57,12 +58,11 @@ export default function Sidebar({ links }) {
 
   return (
     <Box
-      w={{ base: 'full', md: 60 }}
+      width="100%"
+      height="100%"
       bg={bgColor}
       borderRight="1px"
       borderRightColor={useColorModeValue('gray.200', 'gray.700')}
-      pos="fixed"
-      h="full"
       pt={8}
     >
       <Flex px="4" pb="8" align="center" direction="column">
@@ -78,7 +78,12 @@ export default function Sidebar({ links }) {
 
       <VStack spacing={1} align="stretch">
         {links.map((link) => (
-          <NavItem key={link.to} icon={link.icon} to={link.to}>
+          <NavItem 
+            key={link.to} 
+            icon={link.icon} 
+            to={link.to}
+            onClick={link.onClick}
+          >
             {link.label}
           </NavItem>
         ))}

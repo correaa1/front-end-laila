@@ -96,38 +96,36 @@ export default function Transactions() {
 
   return (
     <MainLayout>
-      <Box width="100%">
-        <Flex align="center" mb={4}>
-          <Heading size="lg">Lançamentos Financeiros</Heading>
-          <Spacer />
-          <NewTransactionButton onClick={handleAddClick} />
-        </Flex>
+      <Flex align="center" mb={4}>
+        <Heading size="lg">Lançamentos Financeiros</Heading>
+        <Spacer />
+        <NewTransactionButton onClick={handleAddClick} />
+      </Flex>
 
-        <TransactionFilter
-          categories={categories || []}
-          onFilter={handleFilter}
-          isLoading={isLoadingTransactions}
-        />
+      <TransactionFilter
+        categories={categories || []}
+        onFilter={handleFilter}
+        isLoading={isLoadingTransactions}
+      />
 
-        <TransactionList
-          transactions={transactions}
-          isLoading={isLoadingTransactions || isLoadingCategories}
-          onEdit={handleEditClick}
-          onDelete={handleDeleteClick}
-          pagination={pagination}
-          onPageChange={setPage}
-          onPageSizeChange={setPageSize}
-        />
+      <TransactionList
+        transactions={transactions}
+        isLoading={isLoadingTransactions || isLoadingCategories}
+        onEdit={handleEditClick}
+        onDelete={handleDeleteClick}
+        pagination={pagination}
+        onPageChange={setPage}
+        onPageSizeChange={setPageSize}
+      />
 
-        <TransactionModal
-          isOpen={isOpen}
-          onClose={handleCloseModal}
-          transaction={selectedTransaction}
-          categories={categories || []}
-          onSubmit={handleSubmit}
-          isLoading={isCreating || isUpdating}
-        />
-      </Box>
+      <TransactionModal
+        isOpen={isOpen}
+        onClose={handleCloseModal}
+        transaction={selectedTransaction}
+        categories={categories || []}
+        onSubmit={handleSubmit}
+        isLoading={isCreating || isUpdating}
+      />
     </MainLayout>
   );
 } 
