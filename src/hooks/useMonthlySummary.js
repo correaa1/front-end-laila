@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { transactionService } from '../services/transactionService';
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
 
 export function useMonthlySummary() {
   const currentDate = new Date();
@@ -8,6 +9,9 @@ export function useMonthlySummary() {
     year: currentDate.getFullYear(),
     month: currentDate.getMonth() + 1 // meses começam do 0
   });
+  
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
 
   const { 
     data,
@@ -19,6 +23,7 @@ export function useMonthlySummary() {
     queryKey: ['monthlySummary', dateFilter.year, dateFilter.month],
     queryFn: () => transactionService.getMonthlySummary(dateFilter.year, dateFilter.month),
     staleTime: 5 * 60 * 1000, // 5 minutos
+    enabled: isAuthenticated, // Só executa se o usuário estiver autenticado
   });
 
   // Formatador de moeda
