@@ -26,17 +26,7 @@ O projeto segue uma estrutura organizada por responsabilidades:
 - `/src/theme`: Configuração do tema Chakra UI
 - `/src/utils`: Funções utilitárias
 
-## Funcionalidades
 
-- ✅ Autenticação de usuários (login/registro)
-- ✅ Gerenciamento de categorias financeiras
-- ✅ Controle de lançamentos (receitas e despesas)
-- ✅ Dashboard com resumos e gráficos financeiros
-
-## Etapas Concluídas
-
-- [x] **Etapa 1**: Inicialização do projeto
-- [x] **Etapa 2**: Estruturação do projeto (configuração de rotas, temas, serviços)
 
 ## Como Executar
 
