@@ -4,6 +4,8 @@ import { useMonthlySummary } from '../hooks/useMonthlySummary';
 import MonthSelector from '../components/Dashboard/MonthSelector';
 import SummaryCard from '../components/Dashboard/SummaryCard';
 import { IncomeIcon, ExpenseIcon, BalanceIcon } from '../components/Dashboard/DashboardIcons';
+import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export default function Dashboard() {
   const { 
@@ -13,11 +15,30 @@ export default function Dashboard() {
     isError, 
     previousMonth, 
     nextMonth,
-    formatCurrency
+    formatCurrency,
+    refetch
   } = useMonthlySummary();
 
   const cardBg = useColorModeValue('white', 'gray.700');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
+  const location = useLocation();
+  const initialLoadDone = useRef(false);
+
+  useEffect(() => {
+  
+    if (!initialLoadDone.current || location.pathname === '/dashboard') {
+      const loadDashboardData = async () => {
+        try {
+          await refetch();
+          initialLoadDone.current = true;
+        } catch (error) {
+          console.error("Erro ao carregar dados do dashboard:", error);
+        }
+      };
+      
+      loadDashboardData();
+    }
+  }, [location.pathname, refetch]);
 
   if (isError) {
     return (
@@ -77,8 +98,6 @@ export default function Dashboard() {
               isLoading={isLoading}
             />
           </SimpleGrid>
-
-         
         </>
       )}
     </MainLayout>
