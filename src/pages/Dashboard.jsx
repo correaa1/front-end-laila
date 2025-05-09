@@ -25,8 +25,7 @@ export default function Dashboard() {
   const initialLoadDone = useRef(false);
 
   useEffect(() => {
-    // Apenas carrega os dados uma vez quando o componente monta
-    // ou quando explicitamente navega para o dashboard
+  
     if (!initialLoadDone.current || location.pathname === '/dashboard') {
       const loadDashboardData = async () => {
         try {

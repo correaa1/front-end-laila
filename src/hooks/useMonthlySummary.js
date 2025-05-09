@@ -23,7 +23,7 @@ export function useMonthlySummary() {
     queryKey: ['monthlySummary', dateFilter.year, dateFilter.month],
     queryFn: () => transactionService.getMonthlySummary(dateFilter.year, dateFilter.month),
     staleTime: 5 * 60 * 1000, // 5 minutos
-    enabled: isAuthenticated, // Só executa se o usuário estiver autenticado
+    enabled: isAuthenticated, 
   });
 
   // Formatador de moeda
